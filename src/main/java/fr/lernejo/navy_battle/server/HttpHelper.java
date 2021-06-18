@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpHelper {
-
     public void send404(HttpExchange exchange) throws IOException {
         String response = "Not Found";
         exchange.sendResponseHeaders(404, response.length());
