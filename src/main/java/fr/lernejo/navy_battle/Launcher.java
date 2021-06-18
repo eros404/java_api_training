@@ -2,6 +2,7 @@ package fr.lernejo.navy_battle;
 
 import com.sun.net.httpserver.HttpServer;
 import fr.lernejo.navy_battle.server.NavyPingHttpHandler;
+import fr.lernejo.navy_battle.server.NavyStartGameHttpHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -15,6 +16,7 @@ public class Launcher {
             HttpServer server = HttpServer.create(new InetSocketAddress(Integer.parseInt(args[0])), 0);
             server.setExecutor(Executors.newSingleThreadExecutor());
             server.createContext("/ping", new NavyPingHttpHandler());
+            server.createContext("/api/game/start", new NavyStartGameHttpHandler(server));
             server.start();
         } catch (IOException e) {
             logger.severe(e.getMessage());
