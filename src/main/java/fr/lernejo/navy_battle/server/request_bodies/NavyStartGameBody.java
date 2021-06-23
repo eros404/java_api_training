@@ -1,4 +1,4 @@
-package fr.lernejo.navy_battle.server;
+package fr.lernejo.navy_battle.server.request_bodies;
 
 public class NavyStartGameBody {
     public final String id;

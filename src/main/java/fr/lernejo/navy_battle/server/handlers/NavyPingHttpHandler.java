@@ -1,4 +1,4 @@
-package fr.lernejo.navy_battle.server;
+package fr.lernejo.navy_battle.server.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;

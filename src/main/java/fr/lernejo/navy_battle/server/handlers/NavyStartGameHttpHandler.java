@@ -1,11 +1,12 @@
-package fr.lernejo.navy_battle.server;
+package fr.lernejo.navy_battle.server.handlers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import fr.lernejo.navy_battle.server.HttpHelper;
+import fr.lernejo.navy_battle.server.request_bodies.NavyStartGameBody;
 
 import java.io.IOException;
 import java.io.InputStream;
