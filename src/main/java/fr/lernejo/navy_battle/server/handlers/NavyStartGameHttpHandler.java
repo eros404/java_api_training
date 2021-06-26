@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import fr.lernejo.navy_battle.game.GameContext;
+import fr.lernejo.navy_battle.game.entities.Opponent;
 import fr.lernejo.navy_battle.server.HttpHelper;
 import fr.lernejo.navy_battle.server.request_bodies.NavyStartGameBody;
 
@@ -14,9 +16,11 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class NavyStartGameHttpHandler implements HttpHandler {
-    final HttpServer server;
-    public NavyStartGameHttpHandler(HttpServer server) {
+    private final HttpServer server;
+    private final GameContext gameContext;
+    public NavyStartGameHttpHandler(HttpServer server, GameContext gameContext) {
         this.server = server;
+        this.gameContext = gameContext;
     }
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -24,15 +28,15 @@ public class NavyStartGameHttpHandler implements HttpHandler {
             new HttpHelper().send404(exchange);
         }
         else {
-            InputStream inputStream = exchange.getRequestBody();
-            String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
             try {
-                JsonNode nodeBody = new ObjectMapper().readTree(body);
-                NavyStartGameBody requestBody = new NavyStartGameBody(nodeBody.get("id").asText(), nodeBody.get("url").asText(), nodeBody.get("message").asText());
+                NavyStartGameBody requestBody = new HttpHelper().parseStartGameBody(body);
+                gameContext.newGame(new Opponent(requestBody.id, requestBody.url));
+                sendResponse(exchange);
+                gameContext.attack();
             } catch (Exception e) {
                 new HttpHelper().send400(exchange);
             }
-            sendResponse(exchange);
         }
     }
     public void sendResponse(HttpExchange exchange) throws IOException {

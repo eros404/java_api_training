@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import fr.lernejo.navy_battle.game.Consequence;
+import fr.lernejo.navy_battle.game.GameContext;
 import fr.lernejo.navy_battle.server.request_bodies.FireResponseBody;
 import fr.lernejo.navy_battle.server.HttpHelper;
 
@@ -12,6 +13,12 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class NavyFireHttpHandler implements HttpHandler {
+    final GameContext gameContext;
+
+    public NavyFireHttpHandler(GameContext gameContext) {
+        this.gameContext = gameContext;
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         if (!exchange.getRequestMethod().equalsIgnoreCase("GET")) {
@@ -21,14 +28,20 @@ public class NavyFireHttpHandler implements HttpHandler {
         if (cellParameter == null) {
             new HttpHelper().send400(exchange);
         }
-        sendResponse(exchange);
+        FireResponseBody result = gameContext.handleAttack(cellParameter);
+        sendResponse(exchange, result);
+        if (result.shipLeft) {
+            gameContext.attack();
+        } else {
+            gameContext.endGame();
+        }
     }
-    public void sendResponse(HttpExchange exchange) throws IOException {
-        String response = new ObjectMapper().writeValueAsString(new FireResponseBody(Consequence.sunk, false));
+    public void sendResponse(HttpExchange exchange, FireResponseBody response) throws IOException {
+        String responseString = new ObjectMapper().writeValueAsString(response);
         exchange.getResponseHeaders().set("Content-Type", String.format("application/json; charset=%s", StandardCharsets.UTF_8));
-        exchange.sendResponseHeaders(202, response.length());
+        exchange.sendResponseHeaders(202, responseString.length());
         try (OutputStream os = exchange.getResponseBody()) {
-            os.write(response.getBytes());
+            os.write(responseString.getBytes());
         }
     }
 }

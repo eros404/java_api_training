@@ -9,10 +9,6 @@ import java.util.List;
 public class Boat {
     public final List<Point> cells;
 
-    public Boat(List<Point> cells) {
-        this.cells = cells;
-    }
-
     public Boat(Point startPoint, Direction direction, int length) {
         cells = new ArrayList<>();
         for (int i = 0; i < length; i++) {

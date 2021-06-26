@@ -1,5 +1,6 @@
 package fr.lernejo.navy_battle.game.entities;
 
+import fr.lernejo.navy_battle.game.Consequence;
 import fr.lernejo.navy_battle.game.Direction;
 
 import java.awt.*;
@@ -9,7 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Battleground {
     private final List<Boat> boats;
-    private final int nbRowsAndColumns = 10;
+    public final int nbRowsAndColumns = 10;
 
     public Battleground() {
         boats = new ArrayList<>();
@@ -67,5 +68,23 @@ public class Battleground {
             case right -> point.x++;
         }
         return point;
+    }
+
+    public Consequence shootBoat(Point cell) {
+        Boat boat = boats.stream().filter(b -> b.cells.contains(cell)).findFirst().orElse(null);
+        if (boat != null) {
+            boat.cells.remove(cell);
+            if (boat.cells.size() > 0) {
+                return Consequence.hit;
+            } else {
+                boats.remove(boat);
+                return Consequence.sunk;
+            }
+        }
+        return Consequence.miss;
+    }
+
+    public boolean shipLeft() {
+        return boats.size() > 0;
     }
 }

@@ -1,7 +1,12 @@
 package fr.lernejo.navy_battle.server;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
+import fr.lernejo.navy_battle.game.Consequence;
+import fr.lernejo.navy_battle.game.GameContext;
+import fr.lernejo.navy_battle.server.request_bodies.FireResponseBody;
+import fr.lernejo.navy_battle.server.request_bodies.NavyStartGameBody;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpHelper {
+
     public void send404(HttpExchange exchange) throws IOException {
         String response = "Not Found";
         exchange.sendResponseHeaders(404, response.length());
@@ -44,13 +50,13 @@ public class HttpHelper {
         return result;
     }
 
-    public HttpResponse<String> consumeApi(String port, String urlToConsume) throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(urlToConsume + "/api/game/start"))
-            .setHeader("Accept", "application/json")
-            .setHeader("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString("{\"id\":\"1\", \"url\":\"http://localhost:" + port + "\", \"message\":\"I will crush you!\"}"))
-            .build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    public NavyStartGameBody parseStartGameBody(String body) throws IOException {
+        JsonNode nodeBody = new ObjectMapper().readTree(body);
+        return new NavyStartGameBody(nodeBody.get("id").asText(), nodeBody.get("url").asText(), nodeBody.get("message").asText());
+    }
+
+    public FireResponseBody parseFireResponseBody(String body) throws IOException {
+        JsonNode nodeBody = new ObjectMapper().readTree(body);
+        return new FireResponseBody(Consequence.valueOf(nodeBody.get("consequence").asText()), nodeBody.get("shipLeft").asBoolean());
     }
 }
