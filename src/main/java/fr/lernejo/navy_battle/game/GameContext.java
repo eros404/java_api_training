@@ -32,7 +32,6 @@ public class GameContext {
 
     public void endGame() {
         opponents.remove(getCurrentOpponent());
-        System.exit(0);
     }
 
     public void attack() throws IOException {
