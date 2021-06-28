@@ -26,6 +26,7 @@ public class NavyHttpMessageHandler {
     public FireResponseBody sendFireRequest(String url, String cell) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url + "/api/game/fire?cell=" + cell))
+            .setHeader("Accept", "application/json")
             .GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() == 202) {

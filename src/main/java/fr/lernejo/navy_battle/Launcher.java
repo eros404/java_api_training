@@ -2,13 +2,11 @@ package fr.lernejo.navy_battle;
 
 import fr.lernejo.navy_battle.game.GameContext;
 import fr.lernejo.navy_battle.game.entities.Opponent;
-import fr.lernejo.navy_battle.server.HttpHelper;
 import fr.lernejo.navy_battle.server.NavyHttpMessageHandler;
 import fr.lernejo.navy_battle.server.NavyHttpServer;
 import fr.lernejo.navy_battle.server.request_bodies.NavyStartGameBody;
 
 import java.io.IOException;
-import java.net.http.HttpResponse;
 
 public class Launcher {
     public static void main(String[] args) {
