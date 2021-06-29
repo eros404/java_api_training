@@ -39,6 +39,7 @@ public class NavyFireHttpHandler implements HttpHandler {
     public void sendResponse(HttpExchange exchange, FireResponseBody response) throws IOException {
         String responseString = new ObjectMapper().writeValueAsString(response);
         exchange.getResponseHeaders().set("Content-Type", String.format("application/json; charset=%s", StandardCharsets.UTF_8));
+        exchange.getResponseHeaders().set("Accept", "application/json");
         exchange.sendResponseHeaders(202, responseString.length());
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(responseString.getBytes());
