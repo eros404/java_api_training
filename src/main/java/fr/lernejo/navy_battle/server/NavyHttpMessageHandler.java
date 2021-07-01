@@ -15,6 +15,7 @@ public class NavyHttpMessageHandler {
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(urlToConsume + "/api/game/start"))
             .setHeader("Accept", "application/json")
             .setHeader("Content-Type", "application/json")
+            .setHeader("User-Agent", "NavyPlayer/0.0")
             .POST(HttpRequest.BodyPublishers.ofString("{\"id\":\"1\", \"url\":\"http://localhost:" + port + "\", \"message\":\"I will crush you!\"}"))
             .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -27,6 +28,7 @@ public class NavyHttpMessageHandler {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url + "/api/game/fire?cell=" + cell))
             .setHeader("Accept", "application/json")
+            .setHeader("User-Agent", "NavyPlayer/0.0")
             .GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() == 202) {

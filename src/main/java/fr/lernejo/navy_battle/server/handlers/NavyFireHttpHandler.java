@@ -3,7 +3,6 @@ package fr.lernejo.navy_battle.server.handlers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import fr.lernejo.navy_battle.game.Consequence;
 import fr.lernejo.navy_battle.game.GameContext;
 import fr.lernejo.navy_battle.server.request_bodies.FireResponseBody;
 import fr.lernejo.navy_battle.server.HttpHelper;
@@ -21,7 +20,7 @@ public class NavyFireHttpHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        if (!exchange.getRequestMethod().equalsIgnoreCase("GET")) {
+        if (!"GET".equals(exchange.getRequestMethod())) {
             new HttpHelper().send404(exchange);
         }
         String cellParameter = new HttpHelper().getQueryParameters(exchange.getRequestURI().getQuery()).get("cell");
@@ -39,7 +38,7 @@ public class NavyFireHttpHandler implements HttpHandler {
     public void sendResponse(HttpExchange exchange, FireResponseBody response) throws IOException {
         String responseString = new ObjectMapper().writeValueAsString(response);
         exchange.getResponseHeaders().set("Content-Type", String.format("application/json; charset=%s", StandardCharsets.UTF_8));
-        exchange.getResponseHeaders().set("Accept", "application/json");
+        exchange.getResponseHeaders().set("User-Agent", "NavyPlayer/0.0");
         exchange.sendResponseHeaders(202, responseString.length());
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(responseString.getBytes());

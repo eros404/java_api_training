@@ -17,7 +17,7 @@ public class NavyHttpServer {
     public NavyHttpServer(int port, GameContext gameContext) throws IOException {
         httpServer = HttpServer.create(new InetSocketAddress(port), 0);
         this.gameContext = gameContext;
-        httpServer.setExecutor(Executors.newSingleThreadExecutor());
+        httpServer.setExecutor(Executors.newFixedThreadPool(1));
         httpServer.createContext("/ping", new NavyPingHttpHandler());
         httpServer.createContext("/api/game/start", new NavyStartGameHttpHandler(httpServer, gameContext));
         httpServer.createContext("/api/game/fire", new NavyFireHttpHandler(gameContext));

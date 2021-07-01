@@ -22,7 +22,7 @@ public class NavyStartGameHttpHandler implements HttpHandler {
     }
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        if (!exchange.getRequestMethod().equalsIgnoreCase("POST")) {
+        if (!"POST".equals(exchange.getRequestMethod())) {
             new HttpHelper().send404(exchange);
         }
         else {
@@ -38,9 +38,9 @@ public class NavyStartGameHttpHandler implements HttpHandler {
         }
     }
     public void sendResponse(HttpExchange exchange) throws IOException {
-        String response = new ObjectMapper().writeValueAsString(new NavyStartGameBody("2aca7611-0ae4-49f3-bf63-75bef4769028", "http://localhost:" + server.getAddress().getPort(), "May the best code win"));
+        String response = new ObjectMapper().writeValueAsString(new NavyStartGameBody("2", "http://localhost:" + server.getAddress().getPort(), "May the best code win"));
         exchange.getResponseHeaders().set("Content-Type", String.format("application/json; charset=%s", StandardCharsets.UTF_8));
-        exchange.getResponseHeaders().set("Accept", "application/json");
+        exchange.getResponseHeaders().set("User-Agent", "NavyPlayer/0.0");
         exchange.sendResponseHeaders(202, response.length());
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(response.getBytes());
