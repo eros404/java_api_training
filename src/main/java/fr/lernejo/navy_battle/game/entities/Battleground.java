@@ -42,32 +42,21 @@ public class Battleground {
     private Direction getEndDirection(Point startPoint, int length) {
         List<Direction> directions = new ArrayList(Arrays.asList(Direction.values()));
         Collections.shuffle(directions);
+        Direction returnDir = null;
         for (Direction dir: directions) {
-            Point endPoint = (Point) startPoint.clone();
+            returnDir = dir;
+            Point endPoint = dir.moveAway((Point) startPoint.clone());
             for (int i = 0; i < length; i++) {
-                if (!isEmpty(moveTo(endPoint, dir))) {
-                    break;
-                }
-                if (i == length - 1) {
-                    return dir;
+                if (!isEmpty(dir.moveTo(endPoint))) {
+                    return null;
                 }
             }
         }
-        return null;
+        return returnDir;
     }
 
     private boolean isEmpty(Point point) {
         return point.x > 0 && point.x <= nbRowsAndColumns && point.y > 0 && point.y <= nbRowsAndColumns && boats.stream().map(boat -> boat.cells).noneMatch(cells -> cells.contains(point));
-    }
-
-    private Point moveTo(Point point, Direction direction) {
-        switch (direction) {
-            case top -> point.y++;
-            case bottom -> point.y--;
-            case left -> point.x--;
-            case right -> point.x++;
-        }
-        return point;
     }
 
     public Consequence shootBoat(Point cell) {
