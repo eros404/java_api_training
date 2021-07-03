@@ -27,12 +27,10 @@ public class NavyFireHttpHandler implements HttpHandler {
         if (cellParameter == null) {
             new HttpHelper().send400(exchange);
         }
-        FireResponseBody result = gameContext.handleAttack(cellParameter);
-        sendResponse(exchange, result);
-        if (result.shipLeft) {
-            gameContext.attack();
-        } else {
-            gameContext.endGame();
+        else {
+            FireResponseBody result = gameContext.handleAttack(cellParameter);
+            sendResponse(exchange, result);
+            if (result.shipLeft) { gameContext.attack(); } else { gameContext.endGame(); }
         }
     }
     public void sendResponse(HttpExchange exchange, FireResponseBody response) throws IOException {
