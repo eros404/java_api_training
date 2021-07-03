@@ -19,17 +19,20 @@ public class NavyFireHttpHandler implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        if (!"GET".equals(exchange.getRequestMethod())) {
-            new HttpHelper().send404(exchange);
-        }
-        String cellParameter = new HttpHelper().getQueryParameters(exchange.getRequestURI().getQuery()).get("cell");
-        if (cellParameter == null) {
-            new HttpHelper().send400(exchange);
-        }
-        else {
-            FireResponseBody result = gameContext.handleAttack(cellParameter);
-            sendResponse(exchange, result);
+    public void handle(HttpExchange exchange) {
+        try {
+            if (!"GET".equals(exchange.getRequestMethod())) {
+                new HttpHelper().send404(exchange);
+            }
+            String cellParameter = new HttpHelper().getQueryParameters(exchange.getRequestURI().getQuery()).get("cell");
+            if (cellParameter == null) {
+                new HttpHelper().send400(exchange);
+            } else {
+                FireResponseBody result = gameContext.handleAttack(cellParameter);
+                sendResponse(exchange, result);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     public void sendResponse(HttpExchange exchange, FireResponseBody response) throws IOException {
@@ -40,6 +43,10 @@ public class NavyFireHttpHandler implements HttpHandler {
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(responseString.getBytes());
         }
-        if (response.shipLeft) { gameContext.attack(); } else { gameContext.endGame(); }
+        if (response.shipLeft) {
+            gameContext.attack();
+        } else {
+            gameContext.endGame();
+        }
     }
 }
