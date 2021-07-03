@@ -30,7 +30,6 @@ public class NavyFireHttpHandler implements HttpHandler {
         else {
             FireResponseBody result = gameContext.handleAttack(cellParameter);
             sendResponse(exchange, result);
-            if (result.shipLeft) { gameContext.attack(); } else { gameContext.endGame(); }
         }
     }
     public void sendResponse(HttpExchange exchange, FireResponseBody response) throws IOException {
@@ -41,5 +40,6 @@ public class NavyFireHttpHandler implements HttpHandler {
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(responseString.getBytes());
         }
+        if (response.shipLeft) { gameContext.attack(); } else { gameContext.endGame(); }
     }
 }
