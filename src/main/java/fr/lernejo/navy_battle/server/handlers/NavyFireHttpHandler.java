@@ -19,20 +19,16 @@ public class NavyFireHttpHandler implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) {
+    public void handle(HttpExchange exchange) throws IOException {
+        if (!"GET".equals(exchange.getRequestMethod())) {
+            new HttpHelper().send404(exchange);
+        }
         try {
-            if (!"GET".equals(exchange.getRequestMethod())) {
-                new HttpHelper().send404(exchange);
-            }
             String cellParameter = new HttpHelper().getQueryParameters(exchange.getRequestURI().getQuery()).get("cell");
-            if (cellParameter == null) {
-                new HttpHelper().send400(exchange);
-            } else {
-                FireResponseBody result = gameContext.handleAttack(cellParameter);
-                sendResponse(exchange, result);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+            FireResponseBody result = gameContext.handleAttack(cellParameter);
+            sendResponse(exchange, result);
+        } catch (NullPointerException e) {
+            new HttpHelper().send400(exchange);
         }
     }
     public void sendResponse(HttpExchange exchange, FireResponseBody response) throws IOException {
